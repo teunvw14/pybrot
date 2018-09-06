@@ -1,12 +1,12 @@
-#Pybrot
+# Pybrot
 Pybrot is a python package that you can use to create images of the mandelbrot set like this:
 
 ![alttext](mandelbrots/mandelbrot_ex_2.png)
 
-#Installation
+# Installation
 To install pybrot you can use setup.py.
 
-#Use
+# Use
 
 You can initialise a mandelbrot object like so:
 
