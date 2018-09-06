@@ -1,6 +1,6 @@
 import logging
 import numpy as np
-from ComplexDraw import ComplexDraw as CD
+from .ComplexDraw import ComplexDraw as CD
 from colorsys import hsv_to_rgb
 from numpy import log, log2
 from random import choice, random
