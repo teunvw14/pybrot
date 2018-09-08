@@ -2,7 +2,7 @@ from pybrot.ComplexDraw import ComplexDraw as CD
 from pybrot.Mandelbrot import Mandelbrot
 from pybrot.MandelColoring import IterativeColor, SmoothColor
 
-m = Mandelbrot(samples=500, escapeRadius=4, autoMaxIter=False)
+m = Mandelbrot(samples=500)
 m.Show()
 
 m = Mandelbrot(-0.9230110468224410331799630273585336748656, 

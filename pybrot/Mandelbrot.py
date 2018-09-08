@@ -7,7 +7,7 @@ from .MandelColoring import IterativeColor
 
 class Mandelbrot:
 
-    def __init__(self, x=0, y=0, drawRadius=2, autoMaxIter=True, maxIterations=64, escapeRadius=4, samples=250, coloringFunc=None, blacknessLimit=1):
+    def __init__(self, x=0, y=0, drawRadius=2, autoMaxIter=True, blacknessLimit=0.3, maxIterations=64, escapeRadius=4, samples=250, coloringFunc=None):
         self.coloringFunc = coloringFunc if coloringFunc is not None else IterativeColor
         self.x = x
         self.y = y
@@ -164,7 +164,7 @@ class Mandelbrot:
             mbColorArr.append(row[0])
         return mbColorArr
 
-    def FindOptimalMaxiter(self, minVal=32, maxVal=1024, stepSize=32):
+    def FindOptimalMaxiter(self, minVal=64, maxVal=1024, stepSize=32):
         maxIterStore = self.maxIterations
         sampleStore = self.samples
         colorFuncStore = self.coloringFunc
