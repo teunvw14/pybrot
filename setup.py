@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pybrot",
-    version="0.0.1",
+    version="0.0.3",
     author="Teun van Wezel",
     author_email="vanwezelteun@gmail.com",
     description="A python package to create mandelbrot set images.",
