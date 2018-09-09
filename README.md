@@ -1,7 +1,10 @@
 ﻿# Pybrot
 Pybrot is a python package that you can use to create images of the mandelbrot set like this:
 
-![Picture of mandelbrot set goes here.](mandelbrots/mandelbrot_ex_2.png)
+![Image of mandelbrot set goes here.](mandelbrots/mandelbrot_ex_hq_1.png)
+`Mandelbrot(autoMaxIter=False, maxIterations=128, samples=5000, drawRadius=1.5, coloringFunc=MandelColoring.IterativeColor)`
+![Other image of mandelbrot set goes here.](mandelbrots/mandelbrot_ex_hq_2.png)
+`Mandelbrot(x=-0.9230110468224410331799630273585336748656, y=0.3103593603697618780906159981443973705961, drawRadius=0.00001, samples=1000, blacknessLimit=0.025, coloringFunc=SmoothColor)`
 
 # Installation
 Pybrot is in the python package index. You can use pip to install pybrot.

@@ -62,7 +62,6 @@ class ComplexDraw:
     def CreateImage(self):
         self.GetColours()
         plt.imshow(self.colorArr)
-        plt.gca().invert_yaxis()  # make CCW orientation positive
         #Hide x and y axes
         plt.gca().get_xaxis().set_visible(False)
         plt.gca().get_yaxis().set_visible(False)
@@ -70,7 +69,9 @@ class ComplexDraw:
     def SaveFig(self, filename, dpi=100):
         if self.colorArr == []:
             self.CreateImage()
-        plt.savefig(filename, dpi=dpi)
+        # Save without white borders.
+        logging.info("Saving plot of complex plane in file {}.".format(filename))
+        plt.savefig(filename, bbox_inches='tight', pad_inches=0, dpi=dpi)
 
     def z(self, x, y):
         return x + 1j*y

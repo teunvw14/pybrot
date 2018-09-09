@@ -7,17 +7,17 @@ from .MandelColoring import IterativeColor
 
 class Mandelbrot:
 
-    def __init__(self, x=0, y=0, drawRadius=2, autoMaxIter=True, blacknessLimit=0.3, maxIterations=64, escapeRadius=4, samples=250, coloringFunc=None):
-        self.coloringFunc = coloringFunc if coloringFunc is not None else IterativeColor
+    def __init__(self, x=-0.7, y=0, drawRadius=2, autoMaxIter=True, blacknessLimit=0.3, maxIterations=64, escapeRadius=4, samples=250, coloringFunc=None):
         self.x = x
         self.y = y
         self.drawRadius = drawRadius
-        self.autoMaxIter = autoMaxIter
+        self._autoMaxIter = autoMaxIter
         self.maxIterations = maxIterations
         self.escapeRadius = escapeRadius
         #drawing and coloring stuff
         self.samples = samples
         self.blacknessLimit = blacknessLimit
+        self.coloringFunc = coloringFunc if coloringFunc is not None else IterativeColor
         self.drawer = self.GetDrawer()
         self.iterationHistogram = [0]*maxIterations
         self.totalIterations = 0
@@ -156,7 +156,7 @@ class Mandelbrot:
 
     def MandelbrotColor(self, points):
         mbColorArr = []
-        if self.autoMaxIter:
+        if self._autoMaxIter:
             self.maxIterations = self.FindOptimalMaxiter()
         iterationArr, detailedIterationArr = self.GetAllPointIterations(points)
         logging.debug("Generating mandelbrot image using coloring function: {}".format(self.coloringFunc.__name__))
