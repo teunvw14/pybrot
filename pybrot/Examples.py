@@ -1,6 +1,6 @@
 from pybrot.ComplexDraw import ComplexDraw as CD
 from pybrot.Mandelbrot import Mandelbrot
-from pybrot.MandelColoring import IterativeColor, SmoothColor, HistoColor
+from pybrot.MandelColoring import IterativeColor, SmoothColor, HistoColor, FourthRootColor
 
 m = Mandelbrot(samples=500)
 m.Show()

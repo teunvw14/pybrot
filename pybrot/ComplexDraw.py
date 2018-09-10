@@ -56,7 +56,6 @@ class ComplexDraw:
     def Plot(self):
         if self.colorArr == []:
             self.CreateImage()
-        logging.info("Drawing plot of complex plane.")
         plt.show()
 
     def CreateImage(self):

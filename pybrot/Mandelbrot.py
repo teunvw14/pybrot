@@ -7,16 +7,20 @@ from .MandelColoring import IterativeColor
 
 class Mandelbrot:
 
-    def __init__(self, x=-0.7, y=0, drawRadius=2, autoMaxIter=True, blacknessLimit=0.3, maxIterations=64, escapeRadius=4, samples=250, coloringFunc=None):
+    def __init__(self, x=-0.7, y=0, drawRadius=2, autoMaxIter=True,
+                 blacknessLimit=0.3, maxIterations=64, escapeRadius=4, samples=250,
+                 coloringFunc=None, saturation=0.9):
+        # Define what the image will look like
         self.x = x
         self.y = y
         self.drawRadius = drawRadius
         self._autoMaxIter = autoMaxIter
         self.maxIterations = maxIterations
         self.escapeRadius = escapeRadius
-        #drawing and coloring stuff
+        # Drawing and coloring configuration
         self.samples = samples
         self.blacknessLimit = blacknessLimit
+        self.saturation = saturation
         self.coloringFunc = coloringFunc if coloringFunc is not None else IterativeColor
         self.drawer = self.GetDrawer()
         self.iterationHistogram = [0]*maxIterations
@@ -24,6 +28,7 @@ class Mandelbrot:
         #configurate logging
         logging.basicConfig(format="%(levelname)s | %(module)s: %(message)s", level=logging.DEBUG)
     
+    # DUNDER METHODS
     def __str__(self):
         return "<Mandelbrot object: (x={}, y={})>".format(self.x, self.y)
 
@@ -31,6 +36,7 @@ class Mandelbrot:
         return "<Mandelbrot object: (x={}, y={}), maxIterations={}, escapeRadius={}, coloringFunc={}>".format(
                                     self.x, self.y, self.maxIterations, self.escapeRadius, self.coloringFunc.__name__)
 
+    # PROPERTIES
     @property
     def x(self):
         return self.__x
@@ -64,6 +70,14 @@ class Mandelbrot:
         self._escapeRadius = value
 
     @property
+    def saturation(self):
+        return self._saturation
+
+    @saturation.setter
+    def saturation(self, value):
+        self._saturation = value
+
+    @property
     def maxIterations(self):
         return self._maxIterations
 
@@ -81,6 +95,7 @@ class Mandelbrot:
         self._samples = value
         self.drawer = self.GetDrawer()
 
+    # METHODS
     def GetDrawer(self):
         return CD(self.x-self.drawRadius, self.x+self.drawRadius,
                   self.y-self.drawRadius, self.y+self.drawRadius, 
@@ -104,36 +119,26 @@ class Mandelbrot:
     
     def GetAllPointIterations(self, points):
         intIterationArr = []
-        detailedIterationArr = []
+        dtlIterationArr = []
         for row in points:
             for point in row:
                 if self.IsInMainCardioid(point):
                     intIterationArr.append(0)
-                    detailedIterationArr.append(0)
+                    dtlIterationArr.append(0)
                 else:
-                    iterations, detailedIter = self.GetIterations(point)
+                    iterations, dtlIterations = self.GetIterations(point)
                     intIterationArr.append(iterations)
-                    detailedIterationArr.append(detailedIter)
-                    self.totalIterations += detailedIter
+                    dtlIterationArr.append(dtlIterations)
+                    self.totalIterations += dtlIterations
                     if iterations != 0:
-                        self.iterationHistogram[iterations-1] += detailedIter
-        return intIterationArr, detailedIterationArr
+                        self.iterationHistogram[iterations-1] += dtlIterations
+        return intIterationArr, dtlIterationArr
 
     def IsInMainCardioid(self, point):
         x = point.real
         y = point.imag
         q = (x - 0.25)**2 + y**2
         return True if (q*(q+(x-0.25)) < 0.25*y**2) else False
-    
-    # This function is used to test if an image is mostly black.
-    def ImageIsMostlyBlack(self, rgb, pixelCount=100, limit=0.85):
-        blackCounter = 0
-        for i in range(pixelCount):
-            randRow = choice(rgb)
-            color = choice(randRow)
-            if color == (0, 0, 0):
-                blackCounter += 1
-        return True if blackCounter/pixelCount > limit else False
 
     def GenerateRows(self, points, iterArr, detIterArr):
         iterationArrCounter = 0
@@ -142,15 +147,19 @@ class Mandelbrot:
             tempRow = []
             for point in row:
                 pointIters = iterArr[iterationArrCounter]
-                detailedPointIters = detIterArr[iterationArrCounter]
+                dtlPointIters = detIterArr[iterationArrCounter]
                 # Add black as a color when the number inside the set.
                 if pointIters == 0 or pointIters == self.maxIterations:
                     rowBlackCount += 1
                     tempRow.append((0,0,0))
                 else:
                     tempRow.append(self.coloringFunc(
-                                                    pointIters, self.maxIterations, self.totalIterations,
-                                                    detailedPointIters, self.iterationHistogram))
+                                                    iterations=pointIters, 
+                                                    dtlIterations=dtlPointIters,
+                                                    maxIterations=self.maxIterations, 
+                                                    totalIterations=self.totalIterations,
+                                                    histogram=self.iterationHistogram,
+                                                    saturation=self.saturation))
                 iterationArrCounter += 1
             yield (tempRow, rowBlackCount)
 
@@ -158,39 +167,32 @@ class Mandelbrot:
         mbColorArr = []
         if self._autoMaxIter:
             self.maxIterations = self.FindOptimalMaxiter()
-        iterationArr, detailedIterationArr = self.GetAllPointIterations(points)
+        iterationArr, dtlIterationArr = self.GetAllPointIterations(points)
         logging.debug("Generating mandelbrot image using coloring function: {}".format(self.coloringFunc.__name__))
-        for row in self.GenerateRows(points, iterationArr, detailedIterationArr):
+        for row in self.GenerateRows(points, iterationArr, dtlIterationArr):
             mbColorArr.append(row[0])
         return mbColorArr
 
     def FindOptimalMaxiter(self, minVal=64, maxVal=1024, stepSize=32):
-        maxIterStore = self.maxIterations
-        sampleStore = self.samples
-        colorFuncStore = self.coloringFunc
-        self.maxIterations = minVal
-        self.samples = 50
-        self.coloringFunc = IterativeColor
+        maxIterStore, self.maxIterations = self.maxIterations, minVal
+        sampleStore, self.samples = self.samples, 50
+        colorFuncStore, self.coloringFunc  = self.coloringFunc, IterativeColor
         points = self.drawer.GetComplexNums()
         mbColorArr = []
-        pixelCount = 0 
-        blackCount = 0
         blackQuotient = 10
         while blackQuotient > self.blacknessLimit and self.maxIterations < maxVal:
             mbColorArr = []
             pixelCount = 0
             blackCount = 0
-            iterationArr, detailedIterationArr = self.GetAllPointIterations(points)
-            for row in self.GenerateRows(points, iterationArr, detailedIterationArr):
+            iterationArr, dtlIterationArr = self.GetAllPointIterations(points)
+            for row in self.GenerateRows(points, iterationArr, dtlIterationArr):
                 mbColorArr.append(row[0])
                 pixelCount += len(row[0])
                 blackCount += row[1]
             blackQuotient = blackCount/pixelCount
-            if blackQuotient > self.blacknessLimit:
-                self.maxIterations += stepSize
-                logging.debug("Image is {}% black, increasing maxIterations to: {}.".format
-                                                    (100*blackQuotient, self.maxIterations))
+            self.maxIterations += stepSize
         result = self.maxIterations
+        # Reset properties to stored values.
         self.maxIterations = maxIterStore
         self.samples = sampleStore
         self.coloringFunc = colorFuncStore
