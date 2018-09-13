@@ -25,7 +25,7 @@ Then, you can initialise a mandelbrot object like so:
 
 Then you can call
 
-`m.Show()`
+`m.show()`
 
 to show the image, or use
 
