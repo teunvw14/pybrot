@@ -25,7 +25,6 @@ def HistoColor(*args, **kwargs):
     V = 1
     return hsv_to_rgb(H, S, V)
 
-
 def SmoothColor(*args, **kwargs):
     dtlIterations = kwargs["dtlIterations"]
     maxIterations = kwargs["maxIterations"]
@@ -42,3 +41,10 @@ def FourthRootColor(*args, **kwargs):
     S = kwargs["saturation"]
     V = 1
     return hsv_to_rgb(H, S, V)
+
+def GrayScaleColor(*args, **kwargs):
+    iterations = kwargs["iterations"]
+    maxIterations = kwargs["maxIterations"]
+    hueQuotient = (iterations/maxIterations)**(1/2)
+    r, g, b = hueQuotient, hueQuotient, hueQuotient
+    return (r, g, b)
