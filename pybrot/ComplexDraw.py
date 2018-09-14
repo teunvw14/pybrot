@@ -1,25 +1,25 @@
 import logging
 import numpy as np
 import matplotlib.pyplot as plt
-from numpy import add, subtract, divide, multiply, mod, sin, cos, angle, log, log2, pi
-from matplotlib.colors import hsv_to_rgb
+from numpy import angle
 from colorsys import hls_to_rgb
 
 class ComplexDraw:
+    
     def __init__(self, xmin=-10, xmax=10, ymin=-10, ymax=10, samples=500, ColorFunc=None):
-        #plot settings
-        self._samples = samples
-        #ranges for the axes
+        # set ranges for the axes
         self._xmin = xmin
         self._xmax = xmax
         self._ymin = ymin
         self._ymax = ymax
-        #define the coloring function
+        # plot settings
+        self._samples = samples
+        # coloring details
         self.ColorFunc = ColorFunc if ColorFunc is not None else self.DomainColoringColorFunc
-        #create domain
-        self.CreateDomain()
         self.colorArr = np.empty([samples, samples, 3], dtype=np.uint8)
         self._updatedImage = False
+        # create domain
+        self.CreateDomain()
         #configurate logging
         logging.basicConfig(format="%(levelname)s | %(module)s: %(message)s", level=logging.INFO)
 
@@ -47,6 +47,7 @@ class ComplexDraw:
                 pointCount += 1
             rowCount += 1
 
+    # This function return the set of complex numbers that each correspond to pixels on the screen.
     def GetComplexNums(self):
         return self.xx + 1j*self.yy
 
@@ -62,12 +63,14 @@ class ComplexDraw:
         plt.gca().get_xaxis().set_visible(False)
         plt.gca().get_yaxis().set_visible(False)
     
+    # Function to plot the complex plane.
     def Plot(self):
         if not self._updatedImage:
             self.CreateImage()
             self._updatedImage = True
         plt.show()
 
+    # Function to save the image of the complex plane to a file.
     def SaveFig(self, filename, dpi=100):
         if not self._updatedImage:
             self.CreateImage()
